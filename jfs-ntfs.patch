@@ -1,0 +1,24 @@
+diff -Nuar linux-2.6.32-131.0.15.el6/fs/jfs/super.c linux-2.6.32-131.0.15.el6-jfs-ntfs-patch/fs/jfs/super.c
+--- linux-2.6.32-131.0.15.el6/fs/jfs/super.c	2009-12-03 11:51:21.000000000 +0800
++++ linux-2.6.32-131.0.15.el6-jfs-ntfs-patch/fs/jfs/super.c	2012-02-02 15:03:20.352000400 +0800
+@@ -524,7 +524,7 @@
+ 	 * Page cache is indexed by long.
+ 	 * I would use MAX_LFS_FILESIZE, but it's only half as big
+ 	 */
+-	sb->s_maxbytes = min(((u64) PAGE_CACHE_SIZE << 32) - 1, sb->s_maxbytes);
++	sb->s_maxbytes = min(((u64) PAGE_CACHE_SIZE << 32) - 1, (u64)sb->s_maxbytes);
+ #endif
+ 	sb->s_time_gran = 1;
+ 	return 0;
+diff -Nuar linux-2.6.32-131.0.15.el6/fs/ntfs/super.c linux-2.6.32-131.0.15.el6-jfs-ntfs-patch/fs/ntfs/super.c
+--- linux-2.6.32-131.0.15.el6/fs/ntfs/super.c	2011-05-11 02:37:29.000000000 +0800
++++ linux-2.6.32-131.0.15.el6-jfs-ntfs-patch/fs/ntfs/super.c	2012-02-02 15:02:11.008125347 +0800
+@@ -3047,7 +3047,7 @@
+ 	 * method again... FIXME: Do we need to do this twice now because of
+ 	 * attribute inodes? I think not, so leave as is for now... (AIA)
+ 	 */
+-	if (invalidate_inodes(sb)) {
++	if (invalidate_inodes(sb,true)) {
+ 		ntfs_error(sb, "Busy inodes left. This is most likely a NTFS "
+ 				"driver bug.");
+ 		/* Copied from fs/super.c. I just love this message. (-; */

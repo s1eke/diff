@@ -352,7 +352,7 @@ Summary: The Linux kernel
 
 %ifarch ia64
 %define all_arch_configs kernel-%{version}-ia64*.config
-%define image_install_path boot/efi/EFI/redhat
+%define image_install_path boot/efi/EFI/neokylin
 %define make_target compressed
 %define kernel_image vmlinux.gz
 %endif
@@ -508,7 +508,7 @@ Obsoletes: kernel-smp
 #
 BuildRequires: module-init-tools, patch >= 2.5.4, bash >= 2.03, sh-utils, tar
 BuildRequires: bzip2, findutils, gzip, m4, perl, make >= 3.78, diffutils, gawk
-BuildRequires: gcc >= 3.4.2, binutils >= 2.12, redhat-rpm-config
+BuildRequires: gcc >= 3.4.2, binutils >= 2.12, neokylin-rpm-config
 BuildRequires: net-tools, patchutils, rpm-build >= 4.8.0-7
 BuildRequires: xmlto, asciidoc
 %if %{with_sparse}
@@ -600,6 +600,9 @@ Source81: config-i686-debug-rhel
 Source82: config-generic
 Source83: config-x86_64-debug-rhel
 
+#patch for jfs and ntfs
+Patch999998: jfs-ntfs.patch
+
 # empty final patch file to facilitate testing of kernel patches
 Patch999999: linux-kernel-test.patch
 
@@ -609,7 +612,7 @@ BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root
 # Pass path of the RPM temp dir containing kabideps to find-provides script.
 %global _use_internal_dependency_generator 0
 %define __find_provides %_sourcedir/find-provides %{_tmppath}
-%define __find_requires /usr/lib/rpm/redhat/find-requires kernel
+%define __find_requires /usr/lib/rpm/neokylin/find-requires kernel
 
 %description
 The kernel package contains the Linux kernel (vmlinuz), the core of any
@@ -900,6 +903,7 @@ cp %{SOURCE15} %{SOURCE1} %{SOURCE16} %{SOURCE17} %{SOURCE18} .
 # Dynamically generate kernel .config files from config-* files
 make -f %{SOURCE20} VERSION=%{version} configs
 
+ApplyPatch jfs-ntfs.patch
 ApplyOptionalPatch linux-kernel-test.patch
 
 # Any further pre-build tree manipulations happen here.
@@ -1663,6 +1667,9 @@ fi
 %endif
 
 %changelog
+* Tue Apr 10 2012 Sihai.Yao <sihai.yao@cs2c.com.cn>
+- Adds the JFS XFS REISERFS NTFS GFS support
+
 * Tue Nov 08 2011 Aristeu Rozanski <arozansk@redhat.com> [2.6.32-220.el6]
 - [drm] i915: fix unmap race condition introduced with VT-d fix (Dave Airlie) [750583]
 - [scsi] iscsi: revert lockless queuecommand dispatch (Rob Evers) [751426]
